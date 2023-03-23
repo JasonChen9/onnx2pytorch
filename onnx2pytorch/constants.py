@@ -1,6 +1,6 @@
 from torch import nn
-from torch.nn.modules.conv import _ConvNd
-from torch.nn.modules.pooling import _MaxPoolNd
+from torch.nn.modules.conv import Conv1d, Conv2d, Conv3d
+from torch.nn.modules.pooling import MaxPool1d, MaxPool2d, MaxPool3d
 from onnx2pytorch.operations import (
     BatchNormWrapper,
     InstanceNormWrapper,
@@ -12,11 +12,12 @@ from onnx2pytorch.operations import (
 
 
 COMPOSITE_LAYERS = (nn.Sequential,)
-MULTIOUTPUT_LAYERS = (_MaxPoolNd, Loop, LSTMWrapper, Split, TopK)
+MULTIOUTPUT_LAYERS = (MaxPool1d, MaxPool2d, MaxPool3d, Loop, LSTMWrapper, Split, TopK)
 STANDARD_LAYERS = (
-    _ConvNd,
+    Conv1d, Conv2d, Conv3d,
     BatchNormWrapper,
     InstanceNormWrapper,
     LSTMWrapper,
     nn.Linear,
 )
+

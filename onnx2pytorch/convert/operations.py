@@ -138,7 +138,7 @@ def convert_operations(onnx_graph, opset_version, batch_dim=0, enable_pruning=Tr
         elif node.op_type == "LeakyRelu":
             op = nn.LeakyReLU(**extract_attributes(node), inplace=True)
         elif node.op_type == "Less":
-            op = OperatorWrapper(torch.less)
+            op = OperatorWrapper(torch.lt)
         elif node.op_type == "Log":
             op = OperatorWrapper(torch.log)
         elif node.op_type == "Loop":
