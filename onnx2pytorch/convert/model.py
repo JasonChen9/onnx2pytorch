@@ -209,6 +209,7 @@ class ConvertModel(nn.Module):
                 for out_op_id, output in zip(node.output, outputs):
                     activations[out_op_id] = output
             elif isinstance(op, partial) and op.func == torch.cat:
+                in_activations[1] = in_activations[1].to('mlu')
                 activations[out_op_id] = op(in_activations)
             elif isinstance(op, Identity):
                 # After batch norm fusion the batch norm parameters
@@ -221,7 +222,12 @@ class ConvertModel(nn.Module):
                 for out_op_id, output in zip(node.output, op(*in_activations)):
                     activations[out_op_id] = output
             else:
-                activations[out_op_id] = op(*in_activations)
+                if op.forward in [torch.sqrt, torch.logical_not]:
+                    device = in_activations[0]
+                    activations[out_op_id] = op(in_activations[0].cpu()).to(device)
+                else:
+                    in_activations = [x.to('mlu') for x in in_activations]
+                    activations[out_op_id] = op(*in_activations)
 
             # Remove activations that are no longer needed
             for in_op_id in node.input:

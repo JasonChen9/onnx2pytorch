@@ -10,4 +10,5 @@ class Gather(nn.Module):
 
     def forward(self, data: torch.Tensor, indices: torch.Tensor):
         selection = self.selection + [indices.to(torch.int64)]
-        return data.__getitem__(selection)
+        device = data.device
+        return data.cpu().__getitem__(selection).to(device)
